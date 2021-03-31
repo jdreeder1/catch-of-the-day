@@ -22,6 +22,14 @@ class App extends React.Component {
         //syncState allows you to set up two way data binding between your component's state and your Firebase. 
         //Whenever your Firebase changes, your component's state will change. Whenever your component's state changes, Firebase will change.
         const { params } = this.props.match;
+        //need to reinstate localStorage so that localStorage doesn't reset to empty obj when refresh
+        const localStorageRef = localStorage.getItem(params.storeId);
+        //if there's a localStorage value, set order state to that value
+        if(localStorageRef){
+            this.setState({
+                order: JSON.parse(localStorageRef)
+            });
+        }
         //in dev tools in App's props, select storeId nested in params (forward slash fishes refers to fishes object once bound w firebase)
         this.ref = base.syncState(`${params.storeId}/fishes`, {
             context: this,
@@ -33,7 +41,13 @@ class App extends React.Component {
     componentWillUnmount(){
         base.removeBinding(this.ref);
     }
-
+    //invoked after an update on the pg occurs
+    componentDidUpdate(){
+        //store order in localStorage based on store name
+        //if try to display object without converting it to a string when the browser expects a string
+        //the browser will call toString() on it, and display [object Object]
+        localStorage.setItem(this.props.match.params.storeId, JSON.stringify(this.state.order));
+    }
     //the methods that update state need to live in the same component as state
     addFish = (fish) => { //method lives in App, but we want to run it from AddFishForm - use props to do this
         console.log('adding a fish');
@@ -48,7 +62,29 @@ class App extends React.Component {
         });
         //this function will take our copied old fishes plus our new fish and overwrite the existing state, which will trigger a change in React
         //and update the changed fish everywhere on our page
-    };
+    }
+
+    updateFish = (key, updatedFish) => {
+        //1. take a copy of the current state
+        const fishes = {...this.state.fishes};
+        //2. update that state
+        fishes[key] = updatedFish;
+        //3. set that to state
+        this.setState({
+            fishes: fishes
+        })
+    }
+
+    deleteFish = (key) => {
+        //1. take a copy of state
+        const fishes = {...this.state.fishes};
+        //2. update the state (if want firebase to remove it, too, have to set value to null)
+        fishes[key] = null;
+        //3. update state
+        this.setState({
+            fishes: fishes
+        })
+    }
 
     loadSampleFishes = () => {
         //alert('Loading sample!');
@@ -66,7 +102,16 @@ class App extends React.Component {
         this.setState({
             order: order
         })
-        
+    }
+    removeFromOrder = (key) => {
+        //1. take a copy of state
+        const order = {...this.state.order};
+        //2. remove item from order
+        delete order[key]; //don't need to set as null bc not mirroring to firebase
+        //3. call setState to update state obj - could simply write this.setState({ order }) bc value is same as key
+        this.setState({
+            order: order
+        })
     }
     //Object.keys below gives us all the fishes keys in our state
     //.map() runs a function on each key
@@ -87,8 +132,14 @@ class App extends React.Component {
                         ))}
                     </ul>
                 </div>
-                <Order fishes={this.state.fishes} order={this.state.order} />
-                <Inventory addFish={this.addFish} loadSampleFishes ={this.loadSampleFishes} />
+                <Order fishes={this.state.fishes} order={this.state.order} removeFromOrder={this.removeFromOrder} />
+                <Inventory 
+                    addFish={this.addFish} 
+                    updateFish={this.updateFish}
+                    deleteFish={this.deleteFish}
+                    loadSampleFishes ={this.loadSampleFishes} 
+                    fishes={this.state.fishes} 
+                />
             </div>
         );
     }

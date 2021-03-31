@@ -6,16 +6,19 @@ class Order extends React.Component {
     renderOrder = (key) => {
         const fish = this.props.fishes[key]; //grabs the fish looping over
         const count = this.props.order[key]; //grabs the number of the chosen fish in order
-        const isAvailable = fish.status === 'available';
+        const isAvailable = fish && fish.status === 'available';
+        //make sure fish is loaded before we continue (e.g., wait for rebase to pull fish before setState using fish)
+        if(!fish) return null;
         //if statement below makes sure unavailable fish aren't added to our order
         if(!isAvailable){
-            return (<li>
+            return (<li key={fish.name}>
                 Sorry {fish ? fish.name : 'fish'} is no longer available 
             </li>)
         }
-        return (<li>
+        return (<li key={fish.name}>
             {count} lbs {fish.name} &nbsp;
             { formatPrice(count * fish.price)}
+            <button onClick={() => this.props.removeFromOrder(key)}>&times;</button>
         </li>)
     }
     render(){
