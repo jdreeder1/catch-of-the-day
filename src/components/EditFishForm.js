@@ -1,7 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 //React won't let us update state using an editable form w/o using onChange event
 class EditFishForm extends React.Component {
+    static propTypes = {
+        fish: PropTypes.shape({
+            image: PropTypes.string, 
+            name: PropTypes.string, 
+            price: PropTypes.number, 
+            desc: PropTypes.string, 
+            status: PropTypes.string
+        }),
+        index: PropTypes.string,
+        updatedFish: PropTypes.func
+    };
+
     handleChange = (event) => {
         //update that fish 
         //take a copy of the current fish

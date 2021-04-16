@@ -1,5 +1,5 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 //no way to share state with other components unless that state is on a higher level, e.g., parent sharing with children
 class AddFishForm extends React.Component {
     nameRef = React.createRef();
@@ -7,6 +7,11 @@ class AddFishForm extends React.Component {
     statusRef = React.createRef();
     descRef = React.createRef();
     imageRef = React.createRef();
+
+    static propTypes = {
+        addFish: PropTypes.func
+    };
+
     createFish = (e) => {
         e.preventDefault();
         const fish = {

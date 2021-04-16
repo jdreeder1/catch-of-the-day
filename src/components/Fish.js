@@ -1,7 +1,22 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {formatPrice} from '../helpers'; //import function using {}
 
 class Fish extends React.Component{
+    //by declaring static, propTypes lives on 'momma' component so we don't have to copy it for each instance 
+    //using shape lets you define that you're looking for an object w specific keys and value types assoc w those keys
+    //anytime you write this.props... stop and write a prop type
+    static propTypes = {
+        details: PropTypes.shape({
+            image: PropTypes.string, 
+            name: PropTypes.string, 
+            price: PropTypes.number, 
+            desc: PropTypes.string, 
+            status: PropTypes.string
+        }),
+        addToOrder: PropTypes.func
+    }
+
     handleClick = () => {
         this.props.addToOrder(this.props.index)
     }

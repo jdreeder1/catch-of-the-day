@@ -5,39 +5,56 @@
   appear Must set transitionAppear={true} on animation component
 */
 
+/*stylus is the same as sass but gives you the option to use indentations instead of square brackets, colons & semicolons*/
+/*with create-react-app, you can't use custom css preprocessors unless use eject*/
+/*npm run watch runs the start script and styles:watch scripts concurrently*/
+
+/*CSS Transitions will add css classes to selected element that you can use to add animations to (can see these class names when inspect 
+css transition elements in devtools) */
+/*react gives element order-active class first, then order-enter-active, so we can apply a transition to that change*/
+/*can't transition from height: auto, so use max-height: 0, then set a max-height in px to add a transition to it*/
 .order-enter
-  transform: translateX(-120%)
+  transform translateX(-120%)
   transition 0.5s
-  max-height: 0
+  max-height 0
   padding 0 !important
   &.order-enter-active
     max-height 60px
-    transform: translateX(0)
+    transform translateX(0)
     padding 2rem 0 !important
 
 .order-exit
+  transform translateX(0)
   transition 0.5s
-  transform: translateX(0)
   &.order-exit-active
-    transform: translateX(120%)
-    padding: 0
+    transform translateX(120%)
+    padding 0
 
+.count
+  position relative 
+  overflow hidden
 
 .count-enter
-  background: red
-  transition .5s
+  /*background red*/
+  transition 0.5s
   transform translateY(100%)
+  position absolute
+  opacity 0
   &.count-enter-active
-    background: yellow
+    /*background yellow*/
+    opacity 1
     transform translateY(0)
 
 .count-exit
-  background: black
   transform translateY(0)
-  transition .5s
+  transition 0.5s
   position absolute
+  z-index 1
   left 0
   bottom 0
+  opacity 1
   &.count-exit-active
-    background green
-    transform translateY(-100%) scale(3)
+    /*background green*/
+    transform translateY(-100%) 
+    opacity 0
+

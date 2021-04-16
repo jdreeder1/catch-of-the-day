@@ -1,4 +1,5 @@
 import React from 'react'; //always need to import react into components
+import PropTypes from 'prop-types';
 import { getFunName } from '../helpers';
 
 //every component we have will be its own class
@@ -16,6 +17,10 @@ class StorePicker extends React.Component { //every class in React needs to have
     }
     
     myInput = React.createRef();
+
+    static propTypes = {
+        history: PropTypes.object
+    };
 
     goToStore(event) {
         event.preventDefault();
